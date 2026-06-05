@@ -929,39 +929,106 @@ function initJobSearchView() {
   const btnSearch = document.getElementById('btn-search-jobs');
   if (!btnSearch) return;
 
-  const presetSelect = document.getElementById('search-location-preset');
-  const customWrapper = document.getElementById('search-location-custom-wrapper');
+  let activeLocationsList = ['Remote'];
+  
+  const locationsContainer = document.getElementById('search-locations-container');
+  const customInput = document.getElementById('search-location-custom');
+  const btnAddCustom = document.getElementById('btn-add-custom-location');
+  const presetButtons = document.querySelectorAll('.btn-location-preset');
 
-  if (presetSelect && customWrapper) {
-    presetSelect.addEventListener('change', () => {
-      if (presetSelect.value === 'custom') {
-        customWrapper.classList.remove('hidden');
+  // Helper to render selected locations as tags
+  function renderLocationTags() {
+    if (!locationsContainer) return;
+    
+    const placeholder = document.getElementById('no-locations-placeholder');
+    
+    if (activeLocationsList.length === 0) {
+      if (placeholder) placeholder.classList.remove('hidden');
+      locationsContainer.innerHTML = `<span class="text-muted" id="no-locations-placeholder" style="font-size: 0.75rem; margin: 4px 6px;">No locations selected (defaults to Remote)</span>`;
+      
+      // Clear active class from all presets
+      presetButtons.forEach(btn => btn.classList.remove('active'));
+      return;
+    }
+    
+    if (placeholder) placeholder.classList.add('hidden');
+    
+    locationsContainer.innerHTML = activeLocationsList.map(loc => `
+      <span class="skill-tag" style="background-color: var(--accent-glow); border: 1px solid var(--accent); color: var(--accent-hover); padding: 4px 8px; font-size: 0.75rem; display: inline-flex; align-items: center; gap: 4px; border-radius: 6px;">
+        ${escapeHtml(loc)}
+        <button type="button" class="location-tag-remove" data-value="${escapeHtml(loc)}" style="background:none; border:none; color:var(--accent-hover); cursor:pointer; font-size:0.85rem; line-height:1; font-weight:700;">&times;</button>
+      </span>
+    `).join('');
+
+    // Highlight corresponding preset buttons
+    presetButtons.forEach(btn => {
+      const val = btn.getAttribute('data-value');
+      if (activeLocationsList.includes(val)) {
+        btn.classList.add('active');
       } else {
-        customWrapper.classList.add('hidden');
+        btn.classList.remove('active');
+      }
+    });
+
+    // Re-bind remove click listeners
+    locationsContainer.querySelectorAll('.location-tag-remove').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const val = btn.getAttribute('data-value');
+        activeLocationsList = activeLocationsList.filter(l => l !== val);
+        renderLocationTags();
+      });
+    });
+  }
+
+  // Preset buttons click toggle
+  presetButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const val = btn.getAttribute('data-value');
+      if (activeLocationsList.includes(val)) {
+        activeLocationsList = activeLocationsList.filter(l => l !== val);
+      } else {
+        activeLocationsList.push(val);
+      }
+      renderLocationTags();
+    });
+  });
+
+  // Add custom location helper
+  function addCustomLocation() {
+    if (!customInput) return;
+    const val = customInput.value.trim();
+    if (val && !activeLocationsList.includes(val)) {
+      activeLocationsList.push(val);
+      renderLocationTags();
+      customInput.value = '';
+    }
+  }
+
+  if (btnAddCustom) {
+    btnAddCustom.addEventListener('click', addCustomLocation);
+  }
+
+  if (customInput) {
+    customInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        addCustomLocation();
       }
     });
   }
 
+  // Initial render of locations
+  renderLocationTags();
+
   btnSearch.addEventListener('click', async () => {
     const keyword = document.getElementById('search-role-keyword').value.trim();
     
-    let location = 'Remote';
-    if (presetSelect) {
-      if (presetSelect.value === 'custom') {
-        const customInput = document.getElementById('search-location-custom');
-        location = customInput ? customInput.value.trim() : '';
-      } else {
-        location = presetSelect.value;
-      }
-    }
+    // Fallback to Remote if no location is selected
+    const searchLocations = activeLocationsList.length > 0 ? activeLocationsList : ['Remote'];
+    const locationStr = searchLocations.join(', ');
 
     if (!keyword) {
       alert('Please enter a role or job title to search.');
-      return;
-    }
-
-    if (!location) {
-      alert('Please select or enter a target location.');
       return;
     }
 
@@ -977,6 +1044,7 @@ function initJobSearchView() {
     terminalLog.innerHTML = '';
 
     const progressStepText = document.getElementById('search-progress-step');
+
 
     function appendTerminalLog(message) {
       const line = document.createElement('div');

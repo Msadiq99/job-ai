@@ -408,22 +408,39 @@
               </div>
               
               <div class="form-group">
-                <label for="search-location-preset">Target Country / City</label>
-                <select id="search-location-preset">
-                  <option value="Remote">🌍 Remote (Global)</option>
-                  <option value="Riyadh, Saudi Arabia">🇸🇦 Riyadh, Saudi Arabia</option>
-                  <option value="Jeddah, Saudi Arabia">🇸🇦 Jeddah, Saudi Arabia</option>
-                  <option value="Dubai, UAE">🇦🇪 Dubai, United Arab Emirates</option>
-                  <option value="London, UK">🇬🇧 London, United Kingdom</option>
-                  <option value="San Francisco, USA">🇺🇸 San Francisco, USA</option>
-                  <option value="custom">✏️ Enter Custom Location...</option>
-                </select>
+                <label>Target Locations (Select Multiple)</label>
+                
+                <!-- Selected locations tag container -->
+                <div class="skills-tags-display" id="search-locations-container" style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 8px; min-height: 38px; padding: 8px; border: 1px dashed var(--border-color); border-radius: var(--radius-md); background-color: var(--bg-app); align-items: center;">
+                  <!-- Location tags will be rendered here dynamically -->
+                  <span class="text-muted" id="no-locations-placeholder" style="font-size: 0.75rem; margin: 4px 6px;">No locations selected (defaults to Remote)</span>
+                </div>
+                
+                <!-- Preset location pills grid -->
+                <div class="preset-locations-grid" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; margin-bottom: 10px;">
+                  <button type="button" class="btn btn-secondary btn-small btn-location-preset" data-value="Remote" style="justify-content: flex-start; padding: 6px 10px; font-size: 0.75rem;">🌍 Remote</button>
+                  <button type="button" class="btn btn-secondary btn-small btn-location-preset" data-value="Riyadh, Saudi Arabia" style="justify-content: flex-start; padding: 6px 10px; font-size: 0.75rem;">🇸🇦 Riyadh</button>
+                  <button type="button" class="btn btn-secondary btn-small btn-location-preset" data-value="Jeddah, Saudi Arabia" style="justify-content: flex-start; padding: 6px 10px; font-size: 0.75rem;">🇸🇦 Jeddah</button>
+                  <button type="button" class="btn btn-secondary btn-small btn-location-preset" data-value="Dammam, Saudi Arabia" style="justify-content: flex-start; padding: 6px 10px; font-size: 0.75rem;">🇸🇦 Dammam</button>
+                  <button type="button" class="btn btn-secondary btn-small btn-location-preset" data-value="Khobar, Saudi Arabia" style="justify-content: flex-start; padding: 6px 10px; font-size: 0.75rem;">🇸🇦 Khobar</button>
+                  <button type="button" class="btn btn-secondary btn-small btn-location-preset" data-value="Jubail, Saudi Arabia" style="justify-content: flex-start; padding: 6px 10px; font-size: 0.75rem;">🇸🇦 Jubail</button>
+                  <button type="button" class="btn btn-secondary btn-small btn-location-preset" data-value="Yanbu, Saudi Arabia" style="justify-content: flex-start; padding: 6px 10px; font-size: 0.75rem;">🇸🇦 Yanbu</button>
+                  <button type="button" class="btn btn-secondary btn-small btn-location-preset" data-value="NEOM, Saudi Arabia" style="justify-content: flex-start; padding: 6px 10px; font-size: 0.75rem;">🇸🇦 NEOM</button>
+                  <button type="button" class="btn btn-secondary btn-small btn-location-preset" data-value="Dubai, UAE" style="justify-content: flex-start; padding: 6px 10px; font-size: 0.75rem;">🇦🇪 Dubai, UAE</button>
+                  <button type="button" class="btn btn-secondary btn-small btn-location-preset" data-value="Abu Dhabi, UAE" style="justify-content: flex-start; padding: 6px 10px; font-size: 0.75rem;">🇦🇪 Abu Dhabi, UAE</button>
+                  <button type="button" class="btn btn-secondary btn-small btn-location-preset" data-value="Doha, Qatar" style="justify-content: flex-start; padding: 6px 10px; font-size: 0.75rem;">🇶🇦 Doha, Qatar</button>
+                  <button type="button" class="btn btn-secondary btn-small btn-location-preset" data-value="London, UK" style="justify-content: flex-start; padding: 6px 10px; font-size: 0.75rem;">🇬🇧 London, UK</button>
+                  <button type="button" class="btn btn-secondary btn-small btn-location-preset" data-value="San Francisco, USA" style="justify-content: flex-start; padding: 6px 10px; font-size: 0.75rem;">🇺🇸 San Francisco</button>
+                  <button type="button" class="btn btn-secondary btn-small btn-location-preset" data-value="New York, USA" style="justify-content: flex-start; padding: 6px 10px; font-size: 0.75rem;">🇺🇸 New York</button>
+                </div>
+                
+                <!-- Custom location input -->
+                <div class="input-action-wrapper">
+                  <input type="text" id="search-location-custom" placeholder="Add custom city/country..." style="padding: 8px 12px; font-size: 0.85rem;">
+                  <button type="button" class="btn btn-secondary btn-small" id="btn-add-custom-location" style="padding: 8px 12px; font-size: 0.8rem; white-space: nowrap;">Add</button>
+                </div>
               </div>
-              
-              <div class="form-group hidden" id="search-location-custom-wrapper" style="margin-top: 4px;">
-                <label for="search-location-custom">Enter Custom Country/City</label>
-                <input type="text" id="search-location-custom" placeholder="e.g. Dammam, Saudi Arabia">
-              </div>
+
               
               <div class="action-row">
                 <button class="btn btn-primary btn-full" id="btn-search-jobs">
