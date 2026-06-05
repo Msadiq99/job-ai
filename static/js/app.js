@@ -258,23 +258,48 @@ function initMasterCvView() {
     reader.onload = (e) => {
       const content = e.target.result;
       if (file.name.endsWith('.json')) {
+        let success = false;
         try {
           const parsed = JSON.parse(content);
+          let targetCv = null;
+          
           if (parsed.personal && parsed.experience) {
-            State.data.masterCv = parsed;
+            targetCv = parsed;
+          } else if (parsed.masterCv && parsed.masterCv.personal && parsed.masterCv.experience) {
+            targetCv = parsed.masterCv;
+          }
+          
+          if (targetCv) {
+            // Ensure IDs exist for experience and education
+            if (targetCv.experience) {
+              targetCv.experience.forEach((exp, idx) => {
+                if (!exp.id) exp.id = `exp-${Date.now()}-${idx}`;
+              });
+            }
+            if (targetCv.education) {
+              targetCv.education.forEach((edu, idx) => {
+                if (!edu.id) edu.id = `edu-${Date.now()}-${idx}`;
+              });
+            }
+            
+            State.data.masterCv = targetCv;
             State.save();
             loadCvToForm();
             alert('Master CV profile restored successfully from JSON backup!');
-            filenameLabel.textContent = 'No file selected';
-            parseBar.classList.add('hidden');
-            parseBar.style.display = 'none';
-            filePicker.value = '';
+            success = true;
           } else {
-            alert('Invalid Master CV JSON structure.');
+            alert('Invalid JSON structure. The file must contain a "personal" and "experience" section (or be a full backup containing a "masterCv" object).');
           }
         } catch (err) {
-          alert('Failed to parse JSON file.');
+          alert('Failed to parse JSON file: ' + err.message);
         }
+        
+        // Reset file picker and clean up UI state
+        filenameLabel.textContent = 'No file selected';
+        parseBar.classList.add('hidden');
+        parseBar.style.display = 'none';
+        filePicker.value = '';
+        selectedFileTextContent = '';
       } else {
         selectedFileTextContent = content;
       }
@@ -343,6 +368,18 @@ function initMasterCvView() {
           parseLoadingStep.textContent = msg;
         });
 
+        // Ensure IDs exist for experience and education
+        if (parsedCv.experience) {
+          parsedCv.experience.forEach((exp, idx) => {
+            if (!exp.id) exp.id = `exp-${Date.now()}-${idx}`;
+          });
+        }
+        if (parsedCv.education) {
+          parsedCv.education.forEach((edu, idx) => {
+            if (!edu.id) edu.id = `edu-${Date.now()}-${idx}`;
+          });
+        }
+
         State.data.masterCv = parsedCv;
         State.save();
         loadCvToForm();
@@ -369,13 +406,14 @@ function loadCvToForm() {
   const cv = State.data.masterCv;
   if (!cv) return;
 
-  // Personal Info
-  document.getElementById('cv-fullname').value = cv.personal.fullname || '';
-  document.getElementById('cv-title').value = cv.personal.title || '';
-  document.getElementById('cv-email').value = cv.personal.email || '';
-  document.getElementById('cv-phone').value = cv.personal.phone || '';
-  document.getElementById('cv-website').value = cv.personal.website || '';
-  document.getElementById('cv-summary').value = cv.personal.summary || '';
+  // Personal Info (resilient to missing personal block)
+  const personal = cv.personal || {};
+  document.getElementById('cv-fullname').value = personal.fullname || '';
+  document.getElementById('cv-title').value = personal.title || '';
+  document.getElementById('cv-email').value = personal.email || '';
+  document.getElementById('cv-phone').value = personal.phone || '';
+  document.getElementById('cv-website').value = personal.website || '';
+  document.getElementById('cv-summary').value = personal.summary || '';
 
   // Experience and Education Lists
   renderExperienceList();
