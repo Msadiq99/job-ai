@@ -5,115 +5,36 @@ const STATE_KEY = 'msdk3_app_state_v1';
 const DEFAULT_MOCK_CV = {
   personal: {
     fullname: 'M. Sadiq',
-    title: 'Senior AI Solutions Engineer',
-    email: 'm.sadiq@example.com',
-    phone: '+966 50 123 4567',
-    website: 'https://github.com/msadiq',
-    summary: 'Driven AI engineer with 6+ years of experience building autonomous agents, integrating large language models, and developing highly responsive web interfaces. Specialized in orchestrating Gemini and Claude APIs to automate complex enterprise workflows.'
+    title: 'Senior Artificial Intelligence Engineer',
+    email: 'sadiqgeneralmail@gmail.com',
+    phone: '+966565712713',
+    website: 'https://linkedin.com/in/msadiq',
+    summary: 'Experienced developer and system architect specialized in deploying agentic AI systems and highly responsive client-side web interfaces.'
   },
   experience: [
     {
-      id: 'exp-1',
-      company: 'NeuralFlow Technologies',
-      role: 'Lead AI Engineer',
-      dates: '2024 - Present',
+      id: 'exp-parsed-1',
+      company: 'AI Solutions Inc',
+      role: 'AI Engineer',
+      dates: '2023 - Present',
       bullets: [
-        'Designed and deployed a multi-agent system using Gemini API that automated customer support classification, reducing response latency by 40%.',
-        'Built full-stack React dashboards featuring real-time analytics for monitoring agentic workflow health and tokens performance.',
-        'Collaborated with product teams to design robust prompt engineering frameworks that increased structured output accuracy by 25%.'
-      ]
-    },
-    {
-      id: 'exp-2',
-      company: 'AppForge Solutions',
-      role: 'Senior Software Engineer',
-      dates: '2020 - 2024',
-      bullets: [
-        'Developed scalable REST APIs using Node.js and Express that served over 100k daily active users.',
-        'Led the migration of a legacy monolithic platform into modular microservices, enhancing system uptime to 99.9%.',
-        'Implemented modern UI/UX design components using Vanilla CSS and React, improving Core Web Vitals score by 15 points.'
+        'Deployed scalable API integrations using large language models, improving processing throughput.',
+        'Built beautiful dark-mode tracking dashboards using modern CSS Grid and Flexbox.'
       ]
     }
   ],
   education: [
     {
-      id: 'edu-1',
-      school: 'King Fahd University of Petroleum and Minerals',
+      id: 'edu-parsed-1',
+      school: 'University of Science & Tech',
       degree: 'B.S. in Computer Science',
-      dates: '2016 - 2020'
+      dates: '2019 - 2023'
     }
   ],
-  skills: ['Python', 'JavaScript', 'Google Gemini API', 'Claude API', 'React', 'Node.js', 'AI Agents', 'SQL', 'CSS Grid/Flexbox', 'Git']
+  skills: ['Python', 'JavaScript', 'HTML5', 'CSS3', 'Gemini API', 'AI Agents']
 };
 
-const DEFAULT_MOCK_APPLICATIONS = [
-  {
-    id: 'app-mock-1',
-    company: 'Google DeepMind',
-    title: 'Senior Machine Learning Engineer',
-    url: 'https://careers.google.com/jobs/deepmind',
-    dateAdded: '2026-06-01',
-    status: 'wishlist',
-    planType: 'Auto-Apply Ready',
-    tailoredCv: {
-      bullets: [
-        {
-          jobTitle: 'Lead AI Engineer (NeuralFlow)',
-          bullets: [
-            'Architected state-of-the-art multi-agent pipelines leveraging Gemini Pro models, boosting task-completion rates to 94%.',
-            'Implemented custom prompt validation logic that eliminated hallucinations in LLM structured outputs.'
-          ]
-        }
-      ]
-    },
-    coverLetter: `Dear Hiring Team at Google DeepMind,
-
-I am writing to express my strong interest in the Senior Machine Learning Engineer role. With my background in orchestrating multi-agent systems and utilizing the Gemini API at NeuralFlow, I am excited about the opportunity to contribute to DeepMind's state-of-the-art AI systems.
-
-I look forward to discussing how my experience fits your goals.
-
-Sincerely,
-M. Sadiq`,
-    prepQuestions: [
-      {
-        q: 'How do you handle latency when querying LLMs in a production workflow?',
-        a: 'I utilize asynchronous task queues and prompt caching mechanisms. When using Gemini, I employ streaming responses to start updating the UI immediately.'
-      }
-    ]
-  },
-  {
-    id: 'app-mock-2',
-    company: 'Stripe',
-    title: 'Full Stack AI Developer',
-    url: 'https://stripe.com/jobs',
-    dateAdded: '2026-06-03',
-    status: 'applied',
-    planType: 'Manual',
-    tailoredCv: {
-      bullets: [
-        {
-          jobTitle: 'Senior Software Engineer (AppForge)',
-          bullets: [
-            'Spearheaded integration of LLM-based assistants inside transaction dashboards, streamlining merchant invoice operations.',
-            'Optimized CSS and JavaScript delivery bundles to ensure smooth transitions and micro-animations.'
-          ]
-        }
-      ]
-    },
-    coverLetter: `Dear Stripe Recruiting Team,
-
-I am thrilled to apply for the Full Stack AI Developer position. I have a long history of writing secure Node.js integrations alongside clean, responsive CSS frontends. Combining this full-stack knowledge with LLM integrations makes this role a perfect fit.
-
-Best regards,
-M. Sadiq`,
-    prepQuestions: [
-      {
-        q: 'Why Stripe?',
-        a: 'Stripe is the gold standard for web engineering. Integrating intelligent automation and LLMs into payment products is the next frontier of developer enablement.'
-      }
-    ]
-  }
-];
+const DEFAULT_MOCK_APPLICATIONS = [];
 
 class AppState {
   constructor() {
