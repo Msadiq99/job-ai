@@ -138,12 +138,25 @@ DEFAULT_STATE = {
 # Helper to get API Key and Model from saved settings
 def get_api_credentials() -> tuple:
     state = get_state()
+    api_key = ""
+    
+    # 1. Load from environment (.env file)
+    env_key = os.getenv("GEMINI_API_KEY", "").strip()
+    if env_key and env_key != "YOUR_GEMINI_API_KEY_HERE":
+        api_key = env_key
+
+    # 2. Fallback to SQLite database settings if not set in .env
+    if not api_key and state and "settings" in state:
+        db_key = state["settings"].get("apiKey", "").strip()
+        is_masked = (db_key == "********") or ("..." in db_key and len(db_key) < 20)
+        if db_key and not is_masked:
+            api_key = db_key
+
+    model = "gemini-2.5-flash"
     if state and "settings" in state:
-        settings = state["settings"]
-        api_key = settings.get("apiKey", "").strip() or os.getenv("GEMINI_API_KEY", "").strip()
-        model = settings.get("model", "gemini-2.5-flash").strip()
-        return api_key, model
-    return os.getenv("GEMINI_API_KEY", "").strip(), "gemini-2.5-flash"
+        model = state["settings"].get("model", "gemini-2.5-flash").strip()
+        
+    return api_key, model
 
 @app.get("/api/state")
 async def fetch_state():
@@ -153,13 +166,45 @@ async def fetch_state():
         logger.info("Database empty, seeding default state.")
         save_state(DEFAULT_STATE)
         state = DEFAULT_STATE
+    
+    # Secure API Key: Mask it before returning to the frontend to prevent leakage
+    if "settings" in state:
+        api_key = state["settings"].get("apiKey", "").strip()
+        env_key = os.getenv("GEMINI_API_KEY", "").strip()
+        
+        has_env_key = env_key and env_key != "YOUR_GEMINI_API_KEY_HERE"
+        has_db_key = api_key and not ((api_key == "********") or ("..." in api_key and len(api_key) < 20))
+        
+        if has_env_key:
+            if len(env_key) > 12:
+                state["settings"]["apiKey"] = f"{env_key[:6]}...{env_key[-4:]}"
+            else:
+                state["settings"]["apiKey"] = "********"
+        elif has_db_key:
+            if len(api_key) > 12:
+                state["settings"]["apiKey"] = f"{api_key[:6]}...{api_key[-4:]}"
+            else:
+                state["settings"]["apiKey"] = "********"
+        else:
+            state["settings"]["apiKey"] = ""
+            
     return state
 
 @app.post("/api/state")
 async def update_state(request: Request):
-    """Saves the application state into the SQLite database."""
+    """Saves the application state into the SQLite database, preserving any existing API key if a masked one is received."""
     try:
         data = await request.json()
+        
+        if "settings" in data:
+            incoming_key = data["settings"].get("apiKey", "").strip()
+            is_masked = (incoming_key == "********") or ("..." in incoming_key and len(incoming_key) < 20)
+            
+            if is_masked:
+                existing = get_state()
+                if existing and "settings" in existing:
+                    data["settings"]["apiKey"] = existing["settings"].get("apiKey", "")
+                    
         save_state(data)
         return {"status": "success"}
     except Exception as e:
